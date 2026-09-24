@@ -1,0 +1,532 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Verdant Ventures | Admin</title>
+<style>
+  :root {
+    --navy: #12203d;
+    --navy2: #1b2e52;
+    --green: #6fbe3f;
+    --white: #f6f7f4;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    background: var(--navy);
+    color: var(--white);
+    font-family: Arial, sans-serif;
+    line-height: 1.5;
+  }
+  header {
+    padding: 24px;
+    border-bottom: 1px solid #ffffff25;
+    background: var(--navy2);
+  }
+  .wrap { max-width: 1100px; margin: auto; }
+  h1 { margin: 0; font-size: 25px; }
+  h2 { margin-top: 0; }
+  .muted { color: #b8c5d6; }
+  main { padding: 30px 20px; }
+  .panel {
+    background: var(--navy2);
+    border: 1px solid #ffffff25;
+    border-radius: 14px;
+    padding: 24px;
+    margin-bottom: 22px;
+  }
+  input, button {
+    font: inherit;
+    border-radius: 7px;
+    padding: 11px 13px;
+  }
+  input {
+    display: block;
+    width: 100%;
+    margin: 8px 0 16px;
+    border: 1px solid #9baac0;
+  }
+  label { font-weight: bold; }
+  button {
+    border: 0;
+    background: var(--green);
+    color: #10213a;
+    font-weight: bold;
+    cursor: pointer;
+    margin: 3px;
+  }
+  button:disabled { opacity: .5; cursor: wait; }
+  button.secondary { background: #d8e3ef; }
+  button.danger { background: #ffc0c0; }
+  .topbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 12px;
+    flex-wrap: wrap;
+  }
+  .orders {
+    display: grid;
+    gap: 16px;
+  }
+  .order {
+    background: #142846;
+    border: 1px solid #ffffff30;
+    border-radius: 12px;
+    padding: 20px;
+    overflow-wrap: anywhere;
+  }
+  .order p { margin: 7px 0; }
+  .order strong { color: #a9e76d; }
+  .actions { margin-top: 16px; }
+  .status {
+    display: inline-block;
+    padding: 5px 10px;
+    border-radius: 30px;
+    background: #ffffff20;
+    font-weight: bold;
+  }
+  .error { color: #ffb6b6; }
+  .success { color: #a9e76d; }
+  .hidden { display: none !important; }
+  .filters { margin-bottom: 20px; }
+  .filters button.active {
+    outline: 2px solid white;
+  }
+  #message { min-height: 25px; }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="wrap">
+    <h1>VERDANT VENTURES</h1>
+    <div class="muted">Private Order Tracking Dashboard</div>
+  </div>
+</header>
+
+<main class="wrap">
+
+  <p id="message" role="status" aria-live="polite">
+    Connecting to Firebase…
+  </p>
+
+  <section id="loginPanel" class="panel hidden">
+    <h2>Admin Login</h2>
+    <p class="muted">Sign in with your Firebase admin account.</p>
+
+    <form id="loginForm">
+      <label for="email">Email</label>
+      <input id="email" type="email" required autocomplete="username">
+
+      <label for="password">Password</label>
+      <input id="password" type="password" required
+             autocomplete="current-password">
+
+      <button id="loginButton" type="submit">Sign In</button>
+    </form>
+  </section>
+
+  <section id="dashboard" class="hidden">
+
+    <div class="panel topbar">
+      <div>
+        <h2>Order Records</h2>
+        <p id="signedInAs" class="muted"></p>
+      </div>
+      <button id="logoutButton" class="secondary">Sign Out</button>
+    </div>
+
+    <div class="panel">
+      <p><strong id="totalCount">0</strong> total orders</p>
+      <p><strong id="pendingCount">0</strong> pending</p>
+      <p><strong id="approvedCount">0</strong> approved</p>
+      <p><strong id="rejectedCount">0</strong> rejected</p>
+      <p><strong id="deliveredCount">0</strong> delivered</p>
+    </div>
+
+    <div class="filters">
+      <button data-filter="all" class="active">All</button>
+      <button data-filter="pending">Pending</button>
+      <button data-filter="approved">Approved</button>
+      <button data-filter="rejected">Rejected</button>
+      <button data-filter="delivered">Delivered</button>
+    </div>
+
+    <div id="orders" class="orders"></div>
+
+  </section>
+</main>
+
+<script type="module">
+
+import { initializeApp } from
+  "https://www.gstatic.com/firebasejs/10.14.1/firebase-app.js";
+
+import {
+  getAuth,
+  signInWithEmailAndPassword,
+  signOut,
+  onAuthStateChanged
+} from
+  "https://www.gstatic.com/firebasejs/10.14.1/firebase-auth.js";
+
+import {
+  getFirestore,
+  collection,
+  onSnapshot,
+  doc,
+  updateDoc,
+  serverTimestamp
+} from
+  "https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyBLt_hpMacVEdkvBLSn4bGq4OMscTSey4A",
+  authDomain: "verdant-ventures-62ab6.firebaseapp.com",
+  projectId: "verdant-ventures-62ab6",
+  storageBucket: "verdant-ventures-62ab6.firebasestorage.app",
+  messagingSenderId: "305122502323",
+  appId: "1:305122502323:web:fd46608c5b6152d05b72c6"
+};
+
+// Only this Firebase user may access the admin dashboard.
+// Firestore rules must independently enforce the same UID.
+const ADMIN_UID = "7NPZkGYBMnYtDHj7TDDT2ql2Njp2";
+
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+const db = getFirestore(app);
+
+const loginPanel = document.getElementById("loginPanel");
+const dashboard = document.getElementById("dashboard");
+const loginForm = document.getElementById("loginForm");
+const loginButton = document.getElementById("loginButton");
+const message = document.getElementById("message");
+const ordersContainer = document.getElementById("orders");
+
+let orders = [];
+let activeFilter = "all";
+let unsubscribeOrders = null;
+
+function showMessage(text, type = "") {
+  message.textContent = text;
+  message.className = type;
+}
+
+function displayDate(value) {
+  if (!value || typeof value.toDate !== "function") {
+    return "Pending timestamp";
+  }
+  return value.toDate().toLocaleString();
+}
+
+function addText(parent, label, value) {
+  const p = document.createElement("p");
+  const strong = document.createElement("strong");
+  strong.textContent = label + ": ";
+  p.appendChild(strong);
+  p.appendChild(
+    document.createTextNode(String(value ?? "—"))
+  );
+  parent.appendChild(p);
+}
+
+function makeButton(text, className, handler) {
+  const button = document.createElement("button");
+  button.textContent = text;
+  if (className) button.className = className;
+
+  button.addEventListener("click", async () => {
+    button.disabled = true;
+    try {
+      await handler();
+    } catch (error) {
+      showMessage(
+        "Could not update order: " + error.message,
+        "error"
+      );
+    } finally {
+      button.disabled = false;
+    }
+  });
+
+  return button;
+}
+
+async function changeOrder(id, changes) {
+  if (auth.currentUser?.uid !== ADMIN_UID) {
+    throw new Error("Admin access required.");
+  }
+
+  await updateDoc(doc(db, "payments", id), {
+    ...changes,
+    updatedAt: serverTimestamp()
+  });
+
+  showMessage("Order updated successfully.", "success");
+}
+
+function renderOrders() {
+  ordersContainer.replaceChildren();
+
+  const visible = orders.filter(order => {
+    if (activeFilter === "all") return true;
+    if (activeFilter === "delivered") {
+      return order.fulfilment_status === "delivered";
+    }
+    return order.status === activeFilter;
+  });
+
+  if (visible.length === 0) {
+    const empty = document.createElement("div");
+    empty.className = "panel";
+    empty.textContent = "No orders in this category yet.";
+    ordersContainer.appendChild(empty);
+    return;
+  }
+
+  for (const order of visible) {
+    const card = document.createElement("article");
+    card.className = "order";
+
+    const title = document.createElement("h3");
+    title.textContent = "Order ID: " + order.id;
+    card.appendChild(title);
+
+    const status = document.createElement("p");
+    status.className = "status";
+    status.textContent =
+      String(order.status ?? "unknown").toUpperCase()
+      + " / "
+      + String(order.fulfilment_status ?? "not_delivered")
+        .toUpperCase();
+    card.appendChild(status);
+
+    addText(card, "Customer", order.customer_name);
+    addText(card, "Phone", order.customer_phone);
+    addText(card, "Email", order.customer_email);
+    addText(card, "Voucher", "$" + order.voucher_usd);
+    addText(card, "Voucher price",
+      "K" + order.voucher_price_pgk);
+    addText(card, "Amount reported paid",
+      "K" + order.amount_paid_pgk);
+    addText(card, "BSP reference",
+      order.transfer_reference);
+    addText(card, "Transfer description",
+      order.transfer_description);
+    addText(card, "Submitted",
+      displayDate(order.createdAt));
+
+    const actions = document.createElement("div");
+    actions.className = "actions";
+
+    if (order.status === "pending") {
+      actions.appendChild(
+        makeButton("Approve Payment", "", async () => {
+          if (!confirm(
+            "Have you verified this payment in BSP?"
+          )) return;
+
+          await changeOrder(order.id, {
+            status: "approved",
+            fulfilment_status: "not_delivered"
+          });
+        })
+      );
+
+      actions.appendChild(
+        makeButton("Reject Payment", "danger", async () => {
+          const reason = prompt(
+            "Enter the reason for rejection:"
+          );
+
+          if (reason === null) return;
+
+          if (!reason.trim()) {
+            showMessage(
+              "A rejection reason is required.",
+              "error"
+            );
+            return;
+          }
+
+          await changeOrder(order.id, {
+            status: "rejected",
+            rejection_reason: reason.trim()
+          });
+        })
+      );
+    }
+
+    if (
+      order.status === "approved" &&
+      order.fulfilment_status !== "delivered"
+    ) {
+      actions.appendChild(
+        makeButton("Mark Delivered", "", async () => {
+          if (!confirm(
+            "Have you delivered the voucher to the customer?"
+          )) return;
+
+          await changeOrder(order.id, {
+            fulfilment_status: "delivered",
+            deliveredAt: serverTimestamp()
+          });
+        })
+      );
+    }
+
+    if (order.rejection_reason) {
+      addText(card, "Rejection reason",
+        order.rejection_reason);
+    }
+
+    card.appendChild(actions);
+    ordersContainer.appendChild(card);
+  }
+}
+
+function updateCounts() {
+  document.getElementById("totalCount").textContent =
+    orders.length;
+
+  document.getElementById("pendingCount").textContent =
+    orders.filter(o => o.status === "pending").length;
+
+  document.getElementById("approvedCount").textContent =
+    orders.filter(o => o.status === "approved").length;
+
+  document.getElementById("rejectedCount").textContent =
+    orders.filter(o => o.status === "rejected").length;
+
+  document.getElementById("deliveredCount").textContent =
+    orders.filter(
+      o => o.fulfilment_status === "delivered"
+    ).length;
+}
+
+loginForm.addEventListener("submit", async event => {
+  event.preventDefault();
+
+  loginButton.disabled = true;
+  showMessage("Signing in…");
+
+  try {
+    await signInWithEmailAndPassword(
+      auth,
+      document.getElementById("email").value.trim(),
+      document.getElementById("password").value
+    );
+
+    document.getElementById("password").value = "";
+  } catch (error) {
+    showMessage(
+      "Sign-in failed. Check your email and password.",
+      "error"
+    );
+  } finally {
+    loginButton.disabled = false;
+  }
+});
+
+document.getElementById("logoutButton")
+  .addEventListener("click", async () => {
+    try {
+      await signOut(auth);
+    } catch (error) {
+      showMessage("Sign-out failed.", "error");
+    }
+  });
+
+document.querySelectorAll("[data-filter]")
+  .forEach(button => {
+    button.addEventListener("click", () => {
+      activeFilter = button.dataset.filter;
+
+      document.querySelectorAll("[data-filter]")
+        .forEach(b => {
+          b.classList.toggle(
+            "active",
+            b === button
+          );
+        });
+
+      renderOrders();
+    });
+  });
+
+onAuthStateChanged(auth, async user => {
+  if (unsubscribeOrders) {
+    unsubscribeOrders();
+    unsubscribeOrders = null;
+  }
+
+  orders = [];
+  renderOrders();
+  updateCounts();
+
+  if (!user) {
+    dashboard.classList.add("hidden");
+    loginPanel.classList.remove("hidden");
+    showMessage("Sign in to view orders.");
+    return;
+  }
+
+  if (user.uid !== ADMIN_UID) {
+    dashboard.classList.add("hidden");
+    loginPanel.classList.remove("hidden");
+    showMessage(
+      "This account is not authorised as an admin.",
+      "error"
+    );
+    await signOut(auth);
+    return;
+  }
+
+  loginPanel.classList.add("hidden");
+  dashboard.classList.remove("hidden");
+
+  document.getElementById("signedInAs").textContent =
+    user.email || "Admin";
+
+  showMessage("Loading orders…");
+
+  unsubscribeOrders = onSnapshot(
+    collection(db, "payments"),
+
+    snapshot => {
+      orders = snapshot.docs.map(item => ({
+        id: item.id,
+        ...item.data()
+      }));
+
+      orders.sort((a, b) => {
+        const aTime = a.createdAt?.toMillis?.() ?? 0;
+        const bTime = b.createdAt?.toMillis?.() ?? 0;
+        return bTime - aTime;
+      });
+
+      updateCounts();
+      renderOrders();
+
+      showMessage(
+        "Orders loaded. Payment approval requires manual BSP verification.",
+        "success"
+      );
+    },
+
+    error => {
+      showMessage(
+        "Could not load orders: " + error.message,
+        "error"
+      );
+    }
+  );
+});
+
+</script>
+</body>
+</html>
