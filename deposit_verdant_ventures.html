@@ -1,0 +1,640 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Deposit — Verdant Ventures</title>
+<meta name="description" content="Choose a voucher and review payment instructions from Verdant Ventures.">
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600&display=swap');
+
+:root {
+  --navy: #12203D;
+  --navy-soft: #1B2E52;
+  --slate: #2C3E63;
+  --green: #6FBE3F;
+  --green-deep: #4E9C29;
+  --paper: #F6F7F4;
+  --paper-dim: #ECEEE8;
+  --ink: #1A1E24;
+  --ink-soft: #5B6472;
+  --line: rgba(18,32,61,0.12);
+  --white: #ffffff;
+  --err: #A32B2B;
+  --err-bg: rgba(200,60,60,0.08);
+  --err-line: rgba(200,60,60,0.35);
+}
+
+* { margin:0; padding:0; box-sizing:border-box; }
+html { scroll-behavior: smooth; }
+
+body {
+  background: var(--navy);
+  color: var(--ink);
+  font-family: 'Inter', sans-serif;
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+}
+
+h1, h2, h3, .display {
+  font-family: 'Space Grotesk', sans-serif;
+  color: var(--navy);
+  font-weight: 600;
+  letter-spacing: -0.01em;
+}
+
+a { color: inherit; text-decoration: none; }
+button { font-family: 'Inter', sans-serif; }
+
+.wrap { max-width: 480px; margin: 0 auto; }
+
+:focus-visible { outline: 2px solid var(--green-deep); outline-offset: 2px; }
+
+header {
+  position: sticky; top: 0; z-index: 50;
+  background: rgba(18,32,61,0.92);
+  backdrop-filter: blur(8px);
+  border-bottom: 1px solid rgba(255,255,255,0.14);
+}
+.nav {
+  display:flex; align-items:center; justify-content:space-between;
+  padding: 14px 18px;
+  max-width: 480px; margin: 0 auto;
+}
+.nav-left, .nav-right { display:flex; align-items:center; gap:14px; }
+.icon-btn {
+  width: 30px; height:30px; display:flex; align-items:center; justify-content:center;
+  color: var(--paper); font-size: 18px; cursor:pointer; background:none; border:none;
+}
+.nav-brand { display:flex; align-items:center; gap:8px; }
+.nav-brand img.logo-img { height: 28px; width:auto; display:block; }
+.nav-brand .brand-text { font-family:'Space Grotesk',sans-serif; font-weight:700; font-size: 15px; line-height:1.1; }
+.nav-brand .brand-text .v1 { color: var(--paper); display:block; }
+.nav-brand .brand-text .v2 { color: var(--green-deep); display:block; }
+.back-link {
+  font-size: 12.5px; color: var(--paper); font-weight:600; display:flex; align-items:center; gap:4px;
+}
+.back-link:hover { color: var(--green-deep); }
+
+.ticker {
+  background: var(--green-deep); color: #fff;
+  font-size: 12.5px; font-weight:700; letter-spacing: 0.01em;
+  padding: 7px 0; overflow:hidden; white-space:nowrap;
+}
+.ticker span { display:inline-block; padding-left: 100%; animation: scroll-left 16s linear infinite; }
+@keyframes scroll-left { from { transform: translateX(0); } to { transform: translateX(-100%); } }
+@media (prefers-reduced-motion: reduce) { .ticker span { animation: none; padding-left: 16px; } }
+
+main { padding: 18px 16px 60px; }
+.card {
+  background: #fff;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  padding: 16px;
+  margin-bottom: 16px;
+}
+.card h2 {
+  font-size: 15px; color: var(--navy); margin-bottom: 12px;
+}
+
+.amount-row {
+  display:flex; align-items:center; background: var(--paper-dim); border-radius: 10px;
+  padding: 12px 14px; gap: 10px;
+}
+.amount-row input {
+  flex:1; border:none; background:none; outline:none; font-size: 20px;
+  font-family:'Space Grotesk',sans-serif; color: var(--ink); font-weight:600;
+}
+.currency-badge {
+  display:flex; align-items:center; gap:6px; color: var(--ink-soft); font-size: 13px; font-weight:600;
+}
+.currency-badge .tag {
+  background: var(--green-deep); color:#fff; font-size:10px; font-weight:700;
+  padding: 2px 6px; border-radius:4px; letter-spacing:0.03em;
+}
+
+.quick-amounts {
+  display:flex; flex-wrap:wrap; gap: 8px; margin-top: 12px;
+}
+.quick-amounts button {
+  flex: 1 1 auto; min-width: 64px;
+  background: var(--paper-dim); color: var(--navy); border: none; border-radius: 20px;
+  padding: 9px 10px; font-size: 13.5px; font-weight:600; cursor:pointer;
+  transition: background .15s ease, color .15s ease, transform .1s ease;
+}
+.quick-amounts button:hover { transform: translateY(-1px); }
+.quick-amounts button.active {
+  background: var(--green-deep); color: #fff;
+}
+
+.instructions {
+  background: var(--paper-dim); color: var(--ink); border-radius: 10px; padding: 14px 16px; margin-bottom: 12px;
+  border-left: 3px solid var(--green-deep);
+}
+.instructions .bank-select {
+  display:flex; align-items:center; justify-content:space-between;
+  font-weight:700; font-size: 14.5px; margin-bottom: 10px; color: var(--navy);
+}
+.instructions ol { padding-left: 18px; }
+.instructions li { font-size: 13.5px; margin-bottom: 8px; color: var(--ink); }
+.instructions li:last-child { margin-bottom: 0; }
+
+.bank-details {
+  background: var(--paper-dim); color: var(--ink); border-radius: 10px; padding: 14px 16px;
+  border-left: 3px solid var(--navy);
+}
+.bank-details .bank-title {
+  font-weight:700; font-size: 14px; margin-bottom: 12px; color: var(--navy);
+}
+.field-row { margin-bottom: 12px; }
+.field-row:last-child { margin-bottom:0; }
+.field-row label { display:block; font-size: 12px; font-weight:600; color: var(--ink-soft); margin-bottom:5px; }
+.field-with-copy {
+  display:flex; align-items:center; background:#fff; border:1px solid var(--line);
+  border-radius: 8px; padding: 10px 12px; gap: 10px;
+}
+.field-with-copy span { flex:1; font-size: 14px; color: var(--ink); font-weight:600; word-break: break-all; }
+.copy-btn {
+  background:none; border:none; color: var(--green-deep); cursor:pointer; font-size: 15px;
+  display:flex; align-items:center; justify-content:center; width:22px; height:22px; flex-shrink:0;
+}
+.copy-btn.copied { color: var(--green-deep); }
+
+/* PGK conversion display */
+.conversion {
+  background: var(--paper-dim); color: var(--ink); border-radius: 10px;
+  padding: 13px 16px; font-size: 14px; font-weight:600; text-align:center;
+}
+.conversion strong { color: var(--green-deep); font-family:'Space Grotesk',sans-serif; }
+
+.form-tabs {
+  display: flex;
+  gap: 6px;
+  margin-bottom: 14px;
+}
+.form-tab-btn {
+  flex: 1;
+  background: var(--paper-dim);
+  border: 1px solid var(--line);
+  color: var(--navy);
+  padding: 8px 4px;
+  font-size: 12px;
+  font-weight: 600;
+  border-radius: 8px;
+  cursor: pointer;
+  text-align: center;
+  transition: all .15s ease;
+}
+.form-tab-btn.active {
+  background: var(--green-deep);
+  color: #fff;
+  border-color: var(--green-deep);
+}
+.form-tab-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.tab-pane {
+  display: none;
+}
+.tab-pane.active {
+  display: block;
+}
+
+.transfer-form .field-row input[type="text"],
+.transfer-form .field-row input[type="number"] {
+  width:100%; padding: 10px 12px; border-radius: 8px; border:1px solid var(--line);
+  font-size: 14px; color: var(--ink); background: #fff; outline: none;
+}
+.transfer-form .field-row input:focus {
+  border-color: var(--green-deep);
+}
+
+.step-actions {
+  display: flex;
+  gap: 10px;
+  margin-top: 14px;
+}
+.next-step-btn, .prev-step-btn {
+  flex: 1;
+  background: var(--navy);
+  color: #fff;
+  border: 1px solid var(--navy);
+  padding: 12px;
+  border-radius: 8px;
+  font-weight: 700;
+  font-size: 14px;
+  cursor: pointer;
+  transition: background .15s ease;
+}
+.next-step-btn:hover { background: var(--navy-soft); }
+.next-step-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+.prev-step-btn { background: #fff; color: var(--navy); border: 1px solid var(--line); }
+.prev-step-btn:hover { border-color: var(--navy); background: var(--paper-dim); }
+
+.submit-btn {
+  width:100%; background: var(--green-deep); color: #fff; border:none;
+  padding: 14px; border-radius: 8px; font-weight:700; font-size:15px; cursor:pointer;
+  font-family:'Inter',sans-serif; margin-top: 4px;
+  transition: background .15s ease;
+}
+.submit-btn:hover { background: #3F7E20; }
+.submit-btn:disabled { opacity:.6; cursor:not-allowed; }
+
+.form-result {
+  display:none; padding: 12px 14px; border-radius: 8px; font-size: 13.5px; font-weight:600; margin-top: 12px;
+}
+.form-result.success { display:block; background: rgba(111,190,63,0.12); border:1px solid rgba(111,190,63,0.4); color: var(--green-deep); }
+.form-result.error { display:block; background: var(--err-bg); border:1px solid var(--err-line); color: var(--err); }
+
+footer {
+  text-align:center; padding: 22px 16px 34px; color: rgba(255,255,255,0.55); font-size: 12px;
+  border-top: 1px solid rgba(255,255,255,0.14); margin-top: 10px;
+}
+footer a { color: var(--green); font-weight:600; }
+
+/* Verdant Ventures visual refresh: preserves original three-step layout */
+:root { --navy:#112641; --navy-soft:#193857; --green-deep:#4c9c37; --paper-dim:#f0f6f2; }
+body { background: radial-gradient(ellipse at 5% 8%,rgba(73,190,141,.26),transparent 36%), radial-gradient(ellipse at 95% 55%,rgba(40,155,209,.18),transparent 38%),linear-gradient(145deg,#102842,#13213c 65%,#0e3337); min-height:100vh; }
+header { background:rgba(12,34,53,.89); box-shadow:0 10px 35px rgba(0,0,0,.1); }
+.nav-brand img.logo-img {height:36px;max-width:155px;object-fit:contain;}
+.ticker {background:linear-gradient(90deg,#257b60,#65b64b,#1586aa);}
+.vv-hero {position:relative;overflow:hidden;padding:42px 16px 32px;text-align:center;color:#fff;isolation:isolate;}
+.vv-hero::before,.vv-hero::after {content:"";position:absolute;border-radius:50%;z-index:-1;filter:blur(3px);}
+.vv-hero::before {width:290px;height:290px;left:-145px;top:-85px;background:radial-gradient(circle,rgba(103,215,127,.27),transparent 70%);}
+.vv-hero::after {width:340px;height:340px;right:-190px;bottom:-170px;background:radial-gradient(circle,rgba(35,173,224,.25),transparent 70%);}
+.vv-hero-inner {max-width:540px;}
+.vv-hero-logo {display:flex;justify-content:center;align-items:center;margin:0 auto 12px;width:155px;min-height:70px;border-radius:20px;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.18);box-shadow:0 15px 45px rgba(0,0,0,.15);padding:10px;}
+.vv-hero-logo img {width:100%;max-height:75px;object-fit:contain;}
+.vv-hero-kicker {font-size:10px;font-weight:700;letter-spacing:.19em;color:#a6edc1;margin-bottom:10px;}
+.vv-hero h1 {color:#fff;font-size:clamp(29px,6vw,42px);line-height:1.12;letter-spacing:-.045em;}
+.vv-hero h1 em {font-style:normal;background:linear-gradient(90deg,#a8ed7b,#70dfd2);background-clip:text;-webkit-background-clip:text;color:transparent;}
+.vv-hero p {color:#d5e7e7;margin:14px auto;max-width:400px;font-size:14px;}
+.vv-hero-pills {display:flex;justify-content:center;flex-wrap:wrap;gap:7px;margin-top:18px;}
+.vv-hero-pills span {font-size:10px;font-weight:700;color:#d5f6df;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.15);padding:7px 10px;border-radius:30px;}
+main {padding-top:0;}
+.card {border-radius:19px;padding:21px;margin-bottom:18px;box-shadow:0 16px 42px rgba(0,0,0,.12);border:1px solid rgba(255,255,255,.65);}
+.card h2 {font-size:17px;margin-bottom:15px;}
+.quick-amounts button {border-radius:12px;padding:12px 10px;border:1px solid #dbe8df;}
+.quick-amounts button.active {box-shadow:0 5px 16px rgba(76,156,55,.22);}
+.instructions,.bank-details {border-radius:13px;}
+.field-with-copy {min-height:43px;}
+.vv-account-note,.vv-step-note {font-size:12px;line-height:1.6;color:#506476;margin:-3px 0 15px;}
+.vv-account-note {background:#fff6e8;border:1px solid #efddb8;padding:10px 12px;border-radius:9px;color:#795422;}
+#acc-num {min-height:20px;}
+.next-step-btn,.prev-step-btn,.submit-btn {border-radius:11px;min-height:46px;}
+.submit-btn {background:linear-gradient(100deg,#4c9c37,#208e7e);box-shadow:0 9px 23px rgba(76,156,55,.23);}
+footer {color:#c1d1d6;}
+@media (prefers-reduced-motion:reduce) { *,*::before,*::after {scroll-behavior:auto!important;animation:none!important;} }
+</style>
+
+</head>
+<body>
+
+<header>
+  <div class="nav wrap">
+    <div class="nav-left">
+      <a href="index.html" class="nav-brand">
+        <img class="logo-img" src="verdant-logo.jpg" alt="Verdant Ventures logo">
+      </a>
+    </div>
+    <div class="nav-right">
+      <a href="index.html" class="back-link">&larr; Back to site</a>
+    </div>
+  </div>
+</header>
+
+<div class="ticker">
+  <span>VERDANT VENTURES &bull; DIGITAL REWARDS &bull; PNG LOCAL TRANSFERS</span>
+</div>
+
+<section class="vv-hero"><div class="wrap vv-hero-inner"><div class="vv-hero-logo"><img src="verdant-logo.jpg" alt="Verdant Ventures logo"></div><div class="vv-hero-kicker">VERDANT VENTURES · INTEGRATED TECHNOLOGY</div><h1>Your next digital reward<br><em>starts here.</em></h1><p>Choose your voucher, review the local price, and submit your payment details for review.</p><div class="vv-hero-pills"><span>✦ PNG-friendly</span><span>✦ Clear local prices</span><span>✦ Reviewed by our team</span></div></div></section><main class="wrap">
+  <div class="card">
+    <h2>1. Select Deposit Amount</h2>
+    <div class="amount-row">
+      <input type="number" id="deposit-amount" value="5" min="5" max="20" step="5" readonly aria-label="Selected voucher amount" placeholder="0.00">
+      <div class="currency-badge">
+        <span>USD</span>
+        <span class="tag">US DOLLAR</span>
+      </div>
+    </div>
+    
+    <div class="quick-amounts" id="quick-amounts">
+      <button type="button" data-val="5" class="active">$5 USD</button>
+      <button type="button" data-val="10">$10 USD</button>
+      <button type="button" data-val="15">$15 USD</button>
+      <button type="button" data-val="20">$20 USD</button>
+    </div>
+  </div>
+
+  <div class="card conversion" style="margin-bottom:16px;">
+    Your voucher price: <strong id="pgk-value">28 PGK</strong>
+  </div>
+
+  <div class="card">
+    <h2>2. Payment channel &amp; account details</h2>
+    
+    <!-- SMS Banking Instructions -->
+    <div class="instructions">
+      <div class="bank-select">
+        <span>SMS Banking Transfer</span>
+        <span style="font-size:12px; background:var(--green-deep); color:#fff; padding:2px 8px; border-radius:6px;">Quick SMS (*131#)</span>
+      </div>
+      <ol>
+        <li>Dial your mobile banking shortcode (*131# for BSP).</li>
+        <li>Select Funds Transfer to Third Party Account.</li>
+        <li>Use the receiving account number once Verdant Ventures has provided it. Do not transfer to an unverified account.</li>
+        <li>Include your designated description for transaction tracking.</li>
+      </ol>
+    </div>
+
+    <div class="bank-details space-y-3">
+      <div class="bank-title">Receiving account details</div><p class="vv-account-note">Account number pending. Do not make a transfer until Verdant Ventures provides and confirms the correct number.</p>
+      
+      <div class="field-row">
+        <label>Bank Name</label>
+        <div class="field-with-copy">
+          <span id="bank-name">Bank South Pacific (BSP)</span>
+          <button class="copy-btn" data-copy-target="bank-name" title="Copy">📋</button>
+        </div>
+      </div>
+
+      <div class="field-row">
+        <label>Account Name</label>
+        <div class="field-with-copy">
+          <span id="acc-name">Verdant Ventures Ltd</span>
+          <button class="copy-btn" data-copy-target="acc-name" title="Copy">📋</button>
+        </div>
+      </div>
+
+      <div class="field-row">
+        <label>Account Number (10 Digits)</label>
+        <div class="field-with-copy">
+          <span id="acc-num" aria-label="Account number to be provided"></span>
+          
+        </div>
+      </div>
+
+      <div class="field-row">
+        <label>Description <small style="font-weight:normal; color:var(--ink-soft); display:block; margin-top:2px;">The description here should be the same as the description on your SMS bank transfer</small></label>
+        <div class="field-with-copy" style="background:#fff;">
+          <input type="text" id="udr-input" placeholder="e.g., VV-Deposit-John" style="flex:1; border:none; background:none; outline:none; font-size:14px; color:var(--ink); font-weight:600;">
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <h2>3. Submit payment details for review</h2><p class="vv-step-note">This form does not verify bank transfers automatically. We will check your details before fulfilling an order.</p>
+    
+    <div class="form-tabs">
+      <button type="button" class="form-tab-btn active" data-tab="1">1. Ref No</button>
+      <button type="button" class="form-tab-btn" data-tab="2" disabled>2. Names</button>
+      <button type="button" class="form-tab-btn" data-tab="3" disabled>3. Amount Paid</button>
+    </div>
+
+    <form id="deposit-form" class="transfer-form">
+      
+      <!-- Tab 1: Reference Number -->
+      <div class="tab-pane active" id="pane-1">
+        <div class="field-row">
+          <label for="ref-input">Enter 16-digit Ref No:<small style="font-weight:normal; display:block; color:var(--ink-soft); margin-top:2px;">The reference number is the 16-digit Ref No: submitted by BSP when you receive the confirmation message from BSP after your transaction so you should enter that number.</small></label>
+          <input type="text" id="ref-input" maxlength="16" placeholder="e.g., 2026040612345678" required>
+        </div>
+        <div class="step-actions">
+          <button type="button" class="next-step-btn" id="to-tab-2" disabled>Next: Names &rarr;</button>
+        </div>
+      </div>
+
+      <!-- Tab 2: Names -->
+      <div class="tab-pane" id="pane-2">
+        <div class="field-row mb-3">
+          <label for="sender-name">Your Full Name</label>
+          <input type="text" id="sender-name" placeholder="e.g., John Doe" required>
+        </div>
+        <div class="step-actions">
+          <button type="button" class="prev-step-btn" id="back-to-tab-1">&larr; Back</button>
+          <button type="button" class="next-step-btn" id="to-tab-3">Next: Amount Paid &rarr;</button>
+        </div>
+      </div>
+
+      <!-- Tab 3: Amount Paid -->
+      <div class="tab-pane" id="pane-3">
+        <div class="field-row mb-3">
+          <label for="amount-paid-input">Enter Amount Paid (PGK)</label>
+          <input type="number" id="amount-paid-input" placeholder="e.g., 28" required>
+        </div>
+        
+        <div class="step-actions">
+          <button type="button" class="prev-step-btn" id="back-to-tab-2">&larr; Back</button>
+        </div>
+
+        <button type="submit" class="submit-btn" id="submit-btn" style="margin-top:14px;">Submit Payment Details</button>
+      </div>
+      
+      <div id="form-result" class="form-result"></div>
+    </form>
+  </div>
+</main>
+
+<footer>
+  &copy; 2026 Verdant Ventures Ltd. All rights reserved. <br>
+  Questions? <a href="index.html#contact">Contact Verdant Ventures</a>
+</footer>
+
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+  const pricingMap = {
+    "5": "28 PGK",
+    "10": "55 PGK",
+    "15": "75 PGK",
+    "20": "96 PGK"
+  };
+
+  const amountInput = document.getElementById('deposit-amount');
+  const pgkValueEl = document.getElementById('pgk-value');
+  const quickButtons = document.querySelectorAll('.quick-amounts button');
+
+  function updateConversion(val) {
+    const cleanVal = String(val).trim();
+    if (pricingMap[cleanVal]) {
+      pgkValueEl.textContent = pricingMap[cleanVal];
+    } else {
+      pgkValueEl.textContent = 'Select a listed voucher';
+    }
+  }
+
+  if (amountInput) {
+    amountInput.addEventListener('input', (e) => {
+      const val = e.target.value;
+      quickButtons.forEach(btn => {
+        if (btn.dataset.val === val) {
+          btn.classList.add('active');
+        } else {
+          btn.classList.remove('active');
+        }
+      });
+      updateConversion(val);
+    });
+  }
+
+  quickButtons.forEach(btn => {
+    btn.addEventListener('click', () => {
+      quickButtons.forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      if (amountInput) {
+        amountInput.value = btn.dataset.val;
+        updateConversion(btn.dataset.val);
+      }
+    });
+  });
+
+  const copyButtons = document.querySelectorAll('.copy-btn');
+  copyButtons.forEach(btn => {
+    btn.addEventListener('click', () => {
+      const targetId = btn.getAttribute('data-copy-target');
+      const textSpan = document.getElementById(targetId);
+      if (!textSpan) return;
+      const text = textSpan.textContent.trim();
+
+      const textArea = document.createElement('textarea');
+      textArea.value = text;
+      document.body.appendChild(textArea);
+      textArea.select();
+      try {
+        document.execCommand('copy');
+        btn.textContent = '✓';
+        btn.classList.add('copied');
+        setTimeout(() => {
+          btn.textContent = '📋';
+          btn.classList.remove('copied');
+        }, 2000);
+      } catch (err) {
+        console.error('Failed to copy text', err);
+      }
+      document.body.removeChild(textArea);
+    });
+  });
+
+  const tabBtns = document.querySelectorAll('.form-tab-btn');
+  const panes = document.querySelectorAll('.tab-pane');
+
+  const refInput = document.getElementById('ref-input');
+  const senderName = document.getElementById('sender-name');
+
+  const toTab2 = document.getElementById('to-tab-2');
+  const backToTab1 = document.getElementById('back-to-tab-1');
+  const toTab3 = document.getElementById('to-tab-3');
+  const backToTab2 = document.getElementById('back-to-tab-2');
+
+  function validateRefInput() {
+    const val = refInput.value.trim();
+    // Check if exactly 16 characters long and consists entirely of numbers
+    const isExact16Digits = /^\d{16}$/.test(val);
+    toTab2.disabled = !isExact16Digits;
+  }
+
+  if (refInput) {
+    refInput.addEventListener('input', () => {
+      // Remove any non-digit character dynamically for safety
+      refInput.value = refInput.value.replace(/\D/g, '');
+      validateRefInput();
+    });
+  }
+
+  function switchTab(targetIndex) {
+    panes.forEach(p => p.classList.remove('active'));
+    tabBtns.forEach(b => b.classList.remove('active'));
+
+    document.getElementById('pane-' + targetIndex).classList.add('active');
+    const activeBtn = document.querySelector(`.form-tab-btn[data-tab="${targetIndex}"]`);
+    activeBtn.classList.add('active');
+    activeBtn.disabled = false;
+  }
+
+  if (toTab2) {
+    toTab2.addEventListener('click', () => {
+      const val = refInput.value.trim();
+      if (!/^\d{16}$/.test(val)) {
+        return;
+      }
+      switchTab(2);
+    });
+  }
+
+  if (backToTab1) {
+    backToTab1.addEventListener('click', () => switchTab(1));
+  }
+
+  if (toTab3) {
+    toTab3.addEventListener('click', () => {
+      if (!senderName.value.trim()) {
+        senderName.reportValidity();
+        return;
+      }
+      switchTab(3);
+    });
+  }
+
+  if (backToTab2) {
+    backToTab2.addEventListener('click', () => switchTab(2));
+  }
+
+  const form = document.getElementById('deposit-form');
+  const formResult = document.getElementById('form-result');
+  const submitBtn = document.getElementById('submit-btn');
+  const amountPaidInput = document.getElementById('amount-paid-input');
+
+  if (form) {
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      if (!/^\d{16}$/.test(refInput.value.trim())) { switchTab(1); refInput.focus(); return; }
+      if (!senderName.value.trim()) { switchTab(2); senderName.focus(); return; }
+      if (!amountPaidInput.value.trim() || Number(amountPaidInput.value) <= 0) { switchTab(3); amountPaidInput.focus(); return; }
+      submitBtn.disabled = true;
+      submitBtn.textContent = 'Sending details…';
+      formResult.className = 'form-result';
+      formResult.textContent = '';
+      const payload = {
+        access_key: 'b00663e3-6b03-4df7-9445-5e9b1d30352f',
+        subject: 'Verdant Ventures — payment details for review',
+        from_name: 'Verdant Ventures Payment Page',
+        voucher_usd: amountInput.value,
+        voucher_price_pgk: pgkValueEl.textContent,
+        transfer_reference: refInput.value.trim(),
+        customer_name: senderName.value.trim(),
+        amount_paid_pgk: amountPaidInput.value.trim(),
+        transfer_description: document.getElementById('udr-input').value.trim()
+      };
+      try {
+        const response = await fetch('https://api.web3forms.com/submit', {
+          method: 'POST', headers: {'Content-Type': 'application/json', 'Accept': 'application/json'},
+          body: JSON.stringify(payload)
+        });
+        const result = await response.json();
+        if (!response.ok || !result.success) throw new Error(result.message || 'Submission could not be completed.');
+        formResult.className = 'form-result success';
+        formResult.textContent = 'Your payment details were sent for review. This is not bank payment confirmation. We will check the transfer before fulfilling your voucher.';
+        submitBtn.textContent = 'Details submitted';
+      } catch (error) {
+        formResult.className = 'form-result error';
+        formResult.textContent = 'Could not send your details. Please try again. ' + (error.message || '');
+        submitBtn.disabled = false;
+        submitBtn.textContent = 'Submit Payment Details';
+      }
+    });
+  }
+
+  const menuToggle = document.getElementById('menu-toggle');
+  if (menuToggle) {
+    menuToggle.addEventListener('click', () => {
+      formResult.className = 'form-result error';
+      formResult.style.display = 'block';
+      formResult.textContent = 'Navigation menu is accessible from your primary client dashboard.';
+    });
+  }
+});
+</script>
+</body>
+</html>
