@@ -422,11 +422,13 @@ loginForm.addEventListener("submit", async event => {
     );
 
     document.getElementById("password").value = "";
-  } catch (error) {
-    showMessage(
-      "Sign-in failed. Check your email and password.",
-      "error"
-    );
+ } catch (error) {
+  console.error("Firebase sign-in error:", error);
+
+  showMessage(
+    "Sign-in failed: " + error.code,
+    "error"
+  );
   } finally {
     loginButton.disabled = false;
   }
