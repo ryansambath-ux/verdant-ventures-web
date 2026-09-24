@@ -692,20 +692,27 @@ footer { padding: 40px 0; border-top: 1px solid var(--line); }
         <div class="row"><span class="label">Location</span> Wabag, Enga Province, PNG</div>
       </div>
     </div>
-    <form class="card">
-      <div class="field"><label>Full name</label><input type="text" placeholder="Your name"></div>
+    <form class="card" id="contactForm" action="https://api.web3forms.com/submit" method="POST">
+      <input type="hidden" name="access_key" value="b00663e3-6b03-4df7-9445-5e9b1d30352f">
+      <input type="hidden" name="subject" value="New enquiry from Verdant Ventures website">
+      <input type="hidden" name="from_name" value="Verdant Ventures Website">
+      <input type="checkbox" name="botcheck" class="hidden" style="display:none;">
+
+      <div class="form-result" id="formResult" role="status" aria-live="polite"></div>
+
+      <div class="field"><label>Full name</label><input type="text" name="name" placeholder="Your name" required></div>
       <div class="row2">
-        <div class="field"><label>Email</label><input type="email" placeholder="you@example.com"></div>
-        <div class="field"><label>Phone</label><input type="tel" placeholder="+675 ..."></div>
+        <div class="field"><label>Email</label><input type="email" name="email" placeholder="you@example.com" required></div>
+        <div class="field"><label>Phone</label><input type="tel" name="phone" placeholder="+675 ..."></div>
       </div>
       <div class="field">
         <label>What are you looking for?</label>
-        <select>
+        <select name="enquiry_type">
           <option>Voucher order</option>
           <option>General enquiry</option>
         </select>
       </div>
-      <div class="field"><label>Message</label><textarea placeholder="Tell us what you need..."></textarea></div>
+      <div class="field"><label>Message</label><textarea name="message" placeholder="Tell us what you need..." required></textarea></div>
       <button type="submit" class="submit-btn">Send Message</button>
       <p class="form-note">We'll get back to you as soon as possible.</p>
     </form>
@@ -721,6 +728,52 @@ footer { padding: 40px 0; border-top: 1px solid var(--line); }
     <span class="fine">&copy; 2026 Verdant Ventures. All rights reserved.</span>
   </div>
 </footer>
+
+<script>
+  // Web3Forms submission with inline success/error handling
+  const form = document.getElementById('contactForm');
+  const result = document.getElementById('formResult');
+
+  form.addEventListener('submit', async function (e) {
+    e.preventDefault();
+    const submitBtn = form.querySelector('.submit-btn');
+    submitBtn.disabled = true;
+    submitBtn.textContent = 'Sending…';
+    result.className = 'form-result';
+    result.textContent = '';
+
+    const formData = new FormData(form);
+    const object = Object.fromEntries(formData);
+    const json = JSON.stringify(object);
+
+    try {
+      const res = await fetch('https://api.web3forms.com/submit', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Accept': 'application/json'
+        },
+        body: json
+      });
+      const data = await res.json();
+
+      if (data.success) {
+        form.reset();
+        result.classList.add('success');
+        result.textContent = "Thanks — your message has been sent. We'll be in touch within 1–2 business days.";
+      } else {
+        result.classList.add('error');
+        result.textContent = "Something went wrong. Please try again, or email us directly.";
+      }
+    } catch (err) {
+      result.classList.add('error');
+      result.textContent = "Network error. Please check your connection and try again.";
+    } finally {
+      submitBtn.disabled = false;
+      submitBtn.textContent = 'Send Message';
+    }
+  });
+</script>
 
 </body>
 </html>
