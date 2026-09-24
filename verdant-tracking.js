@@ -72,11 +72,11 @@ export async function submitVoucherOrder(order) {
     throw new Error("Please select a valid voucher.");
   }
 
-  if (!customerName || !customerPhone || !customerEmail) {
-    throw new Error(
-      "Please enter your name, phone number and email."
-    );
-  }
+ if (!customerName || (!customerPhone && !customerEmail)) {
+  throw new Error(
+    "Please enter your name and either a phone number or email."
+  );
+}
 
   if (!/^[0-9]{16}$/.test(transferReference)) {
     throw new Error(
