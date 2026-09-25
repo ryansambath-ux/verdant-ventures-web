@@ -706,11 +706,6 @@ verified before the voucher is delivered.</p></div>
 </main>
 <footer>Verdant Ventures Ltd · Saved receipt · Opens offline</footer>
 </div>
-<script>
-if ('serviceWorker' in navigator) {
-  window.addEventListener('load', () => navigator.serviceWorker.register('./service-worker.js').catch(error => console.warn('App installation unavailable:', error)));
-}
-</script>
 </body>
 </html>`;
   return new Blob([html], { type: 'text/html;charset=utf-8' });
@@ -833,6 +828,11 @@ form.addEventListener('submit', async (event) => {
     submitButton.textContent = 'Submit Payment Details';
   }
 });
+</script>
+<script>
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => navigator.serviceWorker.register('./service-worker.js').catch(error => console.warn('App installation unavailable:', error)));
+}
 </script>
 </body>
 </html>
