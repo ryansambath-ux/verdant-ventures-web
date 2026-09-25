@@ -1,0 +1,59 @@
+// Review against the CURRENT published Firestore rules before deployment.
+// This candidate extends the saved Verdant rules snapshot with customer ownership.
+// Do not replace newer duplicate-reference protections with this file blindly.
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    function admin() { return request.auth != null && request.auth.uid == '7NPZkGYBMnYtDHj7TDDT2ql2Njp2'; }
+    function owner(uid) { return request.auth != null && request.auth.uid == uid; }
+    function price(usd) { return usd == 5 ? 28 : usd == 10 ? 55 : usd == 15 ? 75 : usd == 20 ? 96 : -1; }
+    function validProfile(data) {
+      return data.keys().hasAll(['display_name','phone','email','createdAt'])
+        && data.keys().hasOnly(['display_name','phone','email','createdAt'])
+        && data.display_name is string && data.display_name.size() > 0 && data.display_name.size() <= 100
+        && data.phone is string && data.phone.size() > 0 && data.phone.size() <= 30
+        && data.email is string && data.email.size() > 3 && data.email.size() <= 250;
+    }
+    match /customer_profiles/{uid} {
+      allow create: if owner(uid) && validProfile(request.resource.data)
+        && request.resource.data.email == request.auth.token.email
+        && request.resource.data.createdAt == request.time;
+      allow read: if admin() || owner(uid);
+      allow update: if owner(uid) && validProfile(request.resource.data)
+        && request.resource.data.email == resource.data.email
+        && request.resource.data.email == request.auth.token.email
+        && request.resource.data.createdAt == resource.data.createdAt;
+      allow delete: if false;
+    }
+    match /payments/{id} {
+      allow create: if request.resource.data.keys().hasAll(['voucher_usd','voucher_price_pgk','transfer_reference','customer_name','customer_phone','customer_email','amount_paid_pgk','transfer_description','status','fulfilment_status','createdAt'])
+        && request.resource.data.keys().hasOnly(['voucher_usd','voucher_price_pgk','transfer_reference','customer_name','customer_phone','customer_email','amount_paid_pgk','transfer_description','status','fulfilment_status','createdAt','customer_uid'])
+        && ((request.auth == null && !request.resource.data.keys().hasAny(['customer_uid']))
+          || (request.auth != null && request.resource.data.keys().hasAll(['customer_uid'])
+            && request.resource.data.customer_uid == request.auth.uid
+            && request.resource.data.customer_email == request.auth.token.email))
+        && request.resource.data.status == 'pending'
+        && request.resource.data.fulfilment_status == 'not_delivered'
+        && request.resource.data.createdAt == request.time
+        && request.resource.data.voucher_usd in [5,10,15,20]
+        && request.resource.data.voucher_price_pgk == price(request.resource.data.voucher_usd)
+        && request.resource.data.amount_paid_pgk is number
+        && request.resource.data.amount_paid_pgk > 0
+        && request.resource.data.transfer_reference is string
+        && request.resource.data.transfer_reference.matches('^[0-9]{16}$')
+        && request.resource.data.customer_name is string && request.resource.data.customer_name.size() > 0
+        && request.resource.data.customer_phone is string && request.resource.data.customer_phone.size() <= 60
+        && request.resource.data.customer_email is string && request.resource.data.customer_email.size() <= 250
+        && (request.resource.data.customer_phone.size() > 0 || request.resource.data.customer_email.size() > 3)
+        && request.resource.data.transfer_description is string && request.resource.data.transfer_description.size() <= 500;
+      allow read: if admin() || (request.auth != null && resource.data.get('customer_uid','') == request.auth.uid);
+      allow update: if admin();
+      allow delete: if false;
+    }
+    match /voucher_inventory/{voucherId} {
+      allow read, create, update: if admin();
+      allow delete: if false;
+    }
+    match /{document=**} { allow read, write: if false; }
+  }
+}
