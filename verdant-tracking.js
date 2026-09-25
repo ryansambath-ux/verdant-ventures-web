@@ -106,7 +106,7 @@ export async function submitVoucherOrder(order) {
 
     customer_name: customerName,
     customer_phone: customerPhone,
-    customer_email: customerEmail,
+    customer_email: user ? user.email : customerEmail,
 
     transfer_reference: transferReference,
     transfer_description: transferDescription,
