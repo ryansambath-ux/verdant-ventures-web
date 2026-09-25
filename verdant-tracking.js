@@ -6,6 +6,9 @@
 import { initializeApp } from
   "https://www.gstatic.com/firebasejs/10.14.1/firebase-app.js";
 
+import { getAuth } from
+  "https://www.gstatic.com/firebasejs/10.14.1/firebase-auth.js";
+
 import {
   getFirestore,
   collection,
@@ -26,6 +29,7 @@ const firebaseConfig = {
 
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
+const auth = getAuth(app);
 
 // Must match the prices in your published Firestore rules.
 const VOUCHER_PRICES = {
@@ -90,7 +94,12 @@ export async function submitVoucherOrder(order) {
     );
   }
 
-  // These field names match your published Firestore rules.
+  const user = auth.currentUser;
+  if (user && customerEmail.toLowerCase() !== (user.email || "").toLowerCase()) {
+    throw new Error("Use your account email for this order.");
+  }
+
+  // Account orders carry an owner ID; guest orders retain the existing format.
   const newOrder = {
     voucher_usd: voucherUsd,
     voucher_price_pgk: VOUCHER_PRICES[voucherUsd],
@@ -108,6 +117,7 @@ export async function submitVoucherOrder(order) {
 
     createdAt: serverTimestamp()
   };
+  if (user) newOrder.customer_uid = user.uid;
 
   // Firebase generates a unique document ID for this order.
   const savedOrder = await addDoc(
