@@ -3,7 +3,7 @@ import {readFileSync} from 'node:fs';
 import {initializeTestEnvironment,assertSucceeds,assertFails} from '@firebase/rules-unit-testing';
 import {doc,setDoc,getDoc,updateDoc,collection,query,where,getDocs,serverTimestamp} from 'firebase/firestore';
 
-const env=await initializeTestEnvironment({projectId:'demo-verdant',firestore:{rules:readFileSync('../firestore.customer-profile-candidate.rules','utf8')}});
+const env=await initializeTestEnvironment({projectId:'demo-verdant',firestore:{rules:readFileSync('firestore.rules','utf8')}});
 const guest=env.unauthenticatedContext().firestore();
 const alice=env.authenticatedContext('alice',{email:'alice@example.com'}).firestore();
 const bob=env.authenticatedContext('bob',{email:'bob@example.com'}).firestore();
