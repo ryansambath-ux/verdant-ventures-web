@@ -7,6 +7,14 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="icon" type="image/svg+xml" href="app-icon.svg">
+<script>
+// The Android APK opens this live page in WebView. Hide its own install link there.
+(function () {
+  const inAndroidApp = /\bwv\b/i.test(navigator.userAgent) && /Android/i.test(navigator.userAgent);
+  const installedWebApp = window.matchMedia('(display-mode: standalone)').matches || navigator.standalone === true;
+  if (inAndroidApp || installedWebApp) document.documentElement.classList.add('installed-app');
+}());
+</script>
 
 <meta charset="utf-8"/>
 <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
@@ -240,6 +248,42 @@ header {
   display:inline-block; transition: border-color .15s ease, background .15s ease;
 }
 .btn-ghost:hover { border-color: var(--green-deep); background: rgba(255,255,255,0.05); }
+
+/* Android download card */
+.app-download {
+  position: relative; isolation: isolate; overflow: hidden;
+  display: flex; align-items: center; gap: 16px;
+  width: min(100%, 540px); margin-top: 20px; padding: 17px 19px;
+  border: 1px solid rgba(149, 238, 111, .7); border-radius: 16px;
+  background: linear-gradient(115deg, #123d47, #1d5b54 52%, #285d37);
+  box-shadow: 0 10px 32px rgba(0, 0, 0, .24), 0 0 28px rgba(111, 190, 63, .17);
+  color: #fff; transition: transform .2s ease, box-shadow .2s ease;
+}
+.app-download::before {
+  content: ''; position: absolute; inset: -60% auto -60% -70%; width: 32%;
+  transform: rotate(22deg); background: linear-gradient(90deg, transparent, rgba(255,255,255,.2), transparent);
+  animation: app-shine 5s ease-in-out infinite; pointer-events: none;
+}
+@keyframes app-shine { 0%, 65% { left: -70%; } 100% { left: 130%; } }
+.app-download:hover { transform: translateY(-3px); box-shadow: 0 16px 40px rgba(0,0,0,.3), 0 0 34px rgba(111,190,63,.3); }
+.app-download-icon {
+  display: grid; place-items: center; flex: 0 0 54px; width: 54px; height: 54px;
+  border-radius: 14px; background: #a6ee74; color: #12203D;
+  box-shadow: 0 0 18px rgba(166,238,116,.45);
+}
+.app-download-icon svg { width: 27px; height: 27px; }
+.app-download-copy { display: grid; gap: 2px; min-width: 0; flex: 1; }
+.app-download-kicker { color: #baf892; font-size: 10px; font-weight: 800; letter-spacing: .16em; }
+.app-download-title { font-family: 'Space Grotesk',sans-serif; font-weight: 700; font-size: 18px; line-height: 1.2; }
+.app-download-detail { color: #d4e8dc; font-size: 12px; }
+.app-download-arrow { font-size: 25px; line-height: 1; color: #baf892; }
+html.installed-app .app-download { display: none; }
+@media (max-width: 640px) {
+  .app-download { padding: 14px; gap: 12px; }
+  .app-download-icon { flex-basis: 46px; width: 46px; height: 46px; }
+  .app-download-title { font-size: 16px; }
+}
+
 
 .hero-mark {
   position: relative;
@@ -551,8 +595,12 @@ footer { padding: 40px 0; border-top: 1px solid var(--line); }
 <div class="hero-actions">
 <a aria-label="Open voucher order and payment instructions" class="btn-primary" href="deposit_verdant_ventures.html">Order Your Digital Reward Card</a>
 <a class="btn-ghost" href="#services">Explore Our Services</a>
-<a class="btn-ghost" href="downloads/verdant-ventures-debug.apk" download="Verdant-Ventures-Android.apk" type="application/vnd.android.package-archive">Download Android app (test APK)</a>
 </div>
+<a class="app-download" href="downloads/verdant-ventures-debug.apk" download="Verdant-Ventures-Android.apk" type="application/vnd.android.package-archive" aria-label="Download the Verdant Ventures Android app APK">
+  <span class="app-download-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12m-4-4 4 4 4-4M4 17v3h16v-3"/></svg></span>
+  <span class="app-download-copy"><span class="app-download-kicker">VERDANT ON ANDROID</span><span class="app-download-title">Get the Verdant App</span><span class="app-download-detail">Tap to download the Android APK</span></span>
+  <span class="app-download-arrow" aria-hidden="true">↗</span>
+</a>
 </div>
 <div class="hero-mark">
 <div class="hm-tag">Secure Digital Delivery</div>
