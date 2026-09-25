@@ -1,0 +1,1 @@
+{"private":true,"type":"module","scripts":{"test":"cp ../firestore.customer-profile-candidate.rules firestore.rules && firebase emulators:exec --only firestore --project demo-verdant --config firebase.json \"node firestore-rules.test.mjs\""},"devDependencies":{"@firebase/rules-unit-testing":"^5.0.0","firebase":"^12.0.0","firebase-tools":"^14.0.0"}}
