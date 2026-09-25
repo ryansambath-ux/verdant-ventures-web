@@ -77,6 +77,8 @@ function showTab(which){
 }
 $('login-tab').onclick=()=>showTab('login');
 $('register-tab').onclick=()=>showTab('register');
+if(location.hash==='#register')showTab('register');
+window.addEventListener('hashchange',()=>showTab(location.hash==='#register'?'register':'login'));
 function readableError(error){switch(error.code){
   case 'auth/email-already-in-use': return 'That email already has an account. Sign in instead.';
   case 'auth/invalid-email': return 'Check the email address and try again.';
