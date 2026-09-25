@@ -1,6 +1,6 @@
-// Review against the CURRENT published Firestore rules before deployment.
-// This candidate extends the saved Verdant rules snapshot with customer ownership.
-// Do not replace newer duplicate-reference protections with this file blindly.
+// Based on the full published rules supplied by the owner on 2026-09-26.
+// Adds customer profiles and owner-only order reads while preserving the existing rules.
+// Publish this only together with the customer account website release.
 rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
