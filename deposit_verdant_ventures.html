@@ -1,6 +1,12 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+<meta name="theme-color" content="#12203D">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" type="image/svg+xml" href="app-icon.svg">
+
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Deposit — Verdant Ventures</title>
@@ -700,6 +706,11 @@ verified before the voucher is delivered.</p></div>
 </main>
 <footer>Verdant Ventures Ltd · Saved receipt · Opens offline</footer>
 </div>
+<script>
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => navigator.serviceWorker.register('./service-worker.js').catch(error => console.warn('App installation unavailable:', error)));
+}
+</script>
 </body>
 </html>`;
   return new Blob([html], { type: 'text/html;charset=utf-8' });
