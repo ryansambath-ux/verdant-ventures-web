@@ -2,6 +2,12 @@
 
 <html lang="en">
 <head>
+<meta name="theme-color" content="#12203D">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" type="image/svg+xml" href="app-icon.svg">
+
 <meta charset="utf-8"/>
 <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
 <title>Verdant Ventures — Integrated Technology &amp; Digital Vouchers</title>
@@ -778,6 +784,11 @@ footer { padding: 40px 0; border-top: 1px solid var(--line); }
       submitBtn.textContent = 'Send Message';
     }
   });
+</script>
+<script>
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => navigator.serviceWorker.register('./service-worker.js').catch(error => console.warn('App installation unavailable:', error)));
+}
 </script>
 </body>
 </html>
