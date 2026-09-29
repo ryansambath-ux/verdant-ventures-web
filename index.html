@@ -541,6 +541,33 @@ footer { padding: 40px 0; border-top: 1px solid var(--line); }
 @media(prefers-reduced-motion:reduce){.vv-card-grid figure{animation:none!important;opacity:1!important;transform:translate(-50%,-50%)!important}.vv-card-grid figure:nth-child(2){display:none!important}}
 </style>
 </head>
+<style id="verdant-storefront-layout">
+/* Spacious storefront layout inspired by the reference site's section rhythm. */
+:root{--navy:#0b1f3b;--navy-soft:#16345c;--paper:#f8fbff;--ink-soft:#bacce0;--line:rgba(255,255,255,.18)}
+.wrap,.nav{max-width:1240px}
+header{background:#0b1f3bf2;box-shadow:0 8px 30px rgba(3,15,35,.12)}
+.nav{padding:16px 32px;gap:24px}.nav-brand{flex:1;justify-content:space-between}.nav-links{align-items:center;gap:27px}.nav-links a{color:#d9e9f7}.nav-links a:hover{color:#a9e76d}.nav-brand img.logo-img{height:46px;max-width:150px;object-fit:contain}
+.register-top,.btn-primary,.vv-action{background:#8bd85d!important;color:#09223b!important;border:0;border-radius:999px;font-weight:750;box-shadow:0 9px 24px rgba(66,154,91,.17)}.register-top{padding:12px 22px}.btn-primary:hover,.register-top:hover,.vv-action:hover{background:#b3ed8a!important}
+.hero{padding:94px 0 100px;background:radial-gradient(circle at 78% 42%,#184e76 0%,#102e56 34%,#0b1f3b 70%)}
+.hero-grid{grid-template-columns:1fr 1fr;gap:50px;min-height:510px}.eyebrow-line{font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:#a8d4e5}
+.hero h1{font-size:clamp(3rem,5.6vw,5.1rem);line-height:1.04;letter-spacing:-.055em;max-width:650px}.hero h1 .accent{color:#a9e76d}.hero p.lead{font-size:1.12rem;line-height:1.7;color:#d3e2f0;margin-top:28px}
+.denom-picker{margin-top:30px}.denom-badge{border-radius:999px;background:#ffffff12;border-color:#ffffff45;padding:9px 16px}.denom-badge.featured{color:#b4ed8a;border-color:#a9e76d}
+.hero-actions{margin-top:30px}.btn-primary,.btn-ghost{padding:15px 25px;border-radius:999px}.btn-ghost{border-color:#b4cde07d}
+.hero-visual{position:relative;display:grid;place-items:center;min-height:430px}.hero-visual-glow{position:absolute;width:90%;aspect-ratio:1;border-radius:50%;background:radial-gradient(circle,#63a9b276 0%,#6fbe3f30 38%,transparent 70%);filter:blur(10px)}.hero-visual img{position:relative;width:100%;max-width:580px;max-height:430px;object-fit:contain;filter:drop-shadow(0 30px 35px #07152d9c);transform:rotate(-6deg)}.hero-visual-caption{position:absolute;right:4%;bottom:0;background:#fff;color:#17365c;padding:14px 20px;border-radius:16px;font-size:.75rem;font-weight:800;letter-spacing:.1em;box-shadow:0 15px 40px #07152d50}.hero-visual-caption span{display:block;color:#52718c;letter-spacing:0;font-size:.9rem}
+.app-download{width:max-content;max-width:100%;padding:12px 17px;margin-top:31px;background:#ffffff12;border-color:#ffffff42;box-shadow:none}.app-download-icon{width:40px;height:40px;flex-basis:40px;border-radius:10px}.app-download-title{font-size:15px}.app-download-detail{display:none}.app-download-arrow{font-size:18px}
+section{padding:100px 0}.section-head{max-width:730px;margin-bottom:38px}.section-head h2{font-size:clamp(2.1rem,4vw,3.4rem);line-height:1.13;letter-spacing:-.04em}.section-head p{font-size:1.05rem;line-height:1.7}.badge{font-size:.82rem;letter-spacing:.1em;text-transform:uppercase}
+.platform-section{background:#f5f9fe;color:#173252}.platform-section h2,.platform-section h3{color:#102d50}.platform-section .section-head p{color:#4c6681}.platform-card{min-height:93px;background:#fff;color:#16375a;border:1px solid #dce7f2;border-radius:17px;box-shadow:0 8px 20px #17436a0a;font-size:1rem}.platform-grid{grid-template-columns:repeat(5,minmax(0,1fr));gap:16px}.platform-card:hover{box-shadow:0 14px 30px #17436a1c}
+.flow-section{background:#e9f2fb;color:#173252}.flow-section .section-head h2,.flow-step h3{color:#102d50}.flow-section .section-head p,.flow-step p{color:#4c6681}.flow{border:0;gap:16px;overflow:visible}.flow-step{background:#fff;border:1px solid #d9e7f4!important;border-radius:20px;padding:32px;box-shadow:0 12px 24px #123c6510}.flow-step::after{display:none}.flow-step .fnum{color:#328453}.flow-step h3{font-size:1.16rem;margin-top:30px}.flow-step p{font-size:.94rem;line-height:1.65}
+.vv-showcase{background:linear-gradient(140deg,#0b2545,#164a6c 65%,#124e5c);padding:110px 22px}.vv-showcase h2{font-size:clamp(2.3rem,4vw,3.5rem)}.vv-card-grid{max-width:920px;margin:auto}.vv-showcase-actions{justify-content:center}.strip{background:#102e52}.strip .wrap{justify-content:space-between;gap:20px}.strip strong{color:#a9e76d}
+.vv-info{background:#f5f9fe!important;color:#173252!important;padding:100px 22px!important}.vv-info h2{color:#102d50;font-size:clamp(2.1rem,4vw,3.4rem)}.vv-info-grid article{border-color:#dce7f2!important;box-shadow:0 10px 25px #17436a0b}.vv-info-grid h3{color:#173252}.vv-info-grid p{color:#4c6681}
+#services{background:#fff;color:#173252}#services h2,#services h3{color:#102d50}#services .section-head p,#services .service-body p{color:#4c6681}#services .service-body li{color:#173252}#services .service-row{border-color:#dce7f2}
+#services+section{background:#f5f9fe}.trust{background:#fff;border:1px solid #dce7f2;box-shadow:0 16px 35px #17436a0a}.trust h3{color:#173252}.trust p{color:#4c6681}.trust-item .tnum{color:#3e9360}
+.contact-section{background:#0d2b4d}.contact-grid{align-items:center}.contact-section .section-head{margin-bottom:20px}form.card{box-shadow:0 24px 50px #061c3466;border-radius:24px}.field input,.field textarea,.field select{border-color:#cbd9e6;background:#f7faff}.form-note{color:#61758a}
+footer{background:#091d37}.watermark-layer{display:none}
+@media(max-width:960px){.platform-grid{grid-template-columns:repeat(3,minmax(0,1fr))}.flow{grid-template-columns:repeat(2,1fr)}.hero-grid{gap:20px}}
+@media(max-width:700px){.nav{padding:13px 18px}.nav-links{display:none}.wrap{padding:0 20px}.hero{padding:54px 0 65px}.hero-grid{grid-template-columns:1fr;gap:22px}.hero h1{font-size:clamp(2.65rem,11vw,4rem)}.hero-visual{min-height:260px;order:0}.hero-visual img{max-height:310px}.hero-visual-caption{right:0;bottom:-10px}.platform-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}.platform-card{min-height:78px;padding:10px;font-size:.89rem}.flow{grid-template-columns:1fr}.flow-step h3{margin-top:12px}section{padding:70px 0}.strip .wrap{gap:13px}.trust{padding:30px}.contact-grid{gap:25px}form.card{padding:22px}.vv-showcase{padding:70px 16px}}
+@media(max-width:380px){.platform-grid{grid-template-columns:1fr 1fr}.platform-card svg{width:16px;height:16px}.register-top{padding:10px 14px}}
+</style>
 <body>
 <div aria-hidden="true" class="watermark-layer">
 <div class="wm-row">VERDANT VENTURES · INTEGRATED TECHNOLOGY   VERDANT VENTURES · INTEGRATED TECHNOLOGY   VERDANT VENTURES · INTEGRATED TECHNOLOGY</div>
@@ -561,30 +588,13 @@ footer { padding: 40px 0; border-top: 1px solid var(--line); }
 <nav class="nav-links">
 <a href="#vouchers">Vouchers</a>
 <a href="#how-it-works">How It Works</a>
-<a href="#services">Services</a>
+<a href="#card-designs">Card designs</a>
 <a href="account.html">My Account</a>
-<a class="nav-cta" href="deposit_verdant_ventures.html">Order / Pay</a>
+
 </nav>
 </div>
-<a class="register-top" href="account.html#register">Create Account</a>
+<a class="register-top" href="deposit_verdant_ventures.html">Order / Pay</a>
 </div></header>
-<!-- TITLE BAND -->
-<section class="title-band">
-<div class="wrap">
-<div class="tb-logo-wrap">
-<div class="tb-logo-glow">
-<img alt="Verdant Ventures logo" class="tb-logo" src="verdant-logo.jpg"/>
-</div>
-</div>
-<h1 class="tb-title">Verdant Ventures</h1>
-<div class="tb-sub">Integrated Technology</div>
-<div class="tb-rule">
-<span class="line"></span>
-<span class="dot"></span>
-<span class="line right"></span>
-</div>
-</div>
-</section>
 <!-- HERO -->
 <section class="hero">
 <div class="wrap hero-grid">
@@ -599,9 +609,8 @@ footer { padding: 40px 0; border-top: 1px solid var(--line); }
 <span class="denom-badge">$20 Card</span>
 </div>
 <div class="hero-actions">
-<a aria-label="Open voucher order and payment instructions" class="btn-primary" href="deposit_verdant_ventures.html">Order Your Digital Reward Card</a>
-<a class="btn-ghost" href="#services">Explore Our Services</a>
-<a class="btn-ghost" href="account.html">My Account &amp; Orders</a>
+<a aria-label="Open voucher order and payment instructions" class="btn-primary" href="deposit_verdant_ventures.html">Explore vouchers</a>
+<a class="btn-ghost" href="#how-it-works">How it works</a>
 </div>
 <a class="app-download" href="downloads/verdant-ventures-debug.apk" download="Verdant-Ventures-Android.apk" type="application/vnd.android.package-archive" aria-label="Download the Verdant Ventures Android app APK">
   <span class="app-download-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12m-4-4 4 4 4-4M4 17v3h16v-3"/></svg></span>
@@ -609,25 +618,20 @@ footer { padding: 40px 0; border-top: 1px solid var(--line); }
   <span class="app-download-arrow" aria-hidden="true">↗</span>
 </a>
 </div>
-<div class="hero-mark">
-<div class="hm-tag">Secure Digital Delivery</div>
-<h3>Order locally, receive after confirmation</h3>
-<p>Follow the published payment instructions. Voucher delivery is arranged after payment is checked.</p>
-<div class="hm-row">
-<span class="hm-pill">Phone Banking</span>
-<span class="hm-pill">Cash Agents</span>
-<span class="hm-pill">Order confirmation</span>
-</div>
+<div class="hero-visual" aria-label="Verdant reward card sample">
+  <div class="hero-visual-glow"></div>
+  <img src="sample-card-2.png" alt="Sample Verdant digital reward card, not a real card" fetchpriority="high">
+  <div class="hero-visual-caption">DIGITAL REWARD CARD <span>Sample design</span></div>
 </div>
 </div>
 </section>
 <!-- PLATFORMS -->
-<section id="vouchers">
+<section id="vouchers" class="platform-section">
 <div class="wrap">
 <div class="section-head">
 <span class="badge">Digital Vouchers</span>
 <h2>Compatible with your favorite platforms</h2>
-<p>Top up and redeem across the apps, games, and streaming services PNG customers use most.</p>
+<p>Explore popular services. Availability and compatibility depend on the voucher supplied; confirm before ordering.</p>
 </div>
 <div class="platform-grid">
 <a class="platform-card" href="https://www.netflix.com" target="_blank">
@@ -670,7 +674,7 @@ footer { padding: 40px 0; border-top: 1px solid var(--line); }
 <div class="wrap">
 <div class="section-head">
 <h2>How it works</h2>
-<p>From local payment to global access in four simple steps.</p>
+<p>Choose your voucher, send your request, and wait for payment and delivery confirmation.</p>
 </div>
 <div class="flow">
 <div class="flow-step">
@@ -681,7 +685,7 @@ footer { padding: 40px 0; border-top: 1px solid var(--line); }
 <div class="flow-step">
 <div class="fnum">STEP 02</div>
 <h3>Pay locally</h3>
-<p>Settle via phone banking or cash — no international card needed.</p>
+<p>Follow the confirmed local payment instructions for your order.</p>
 </div>
 <div class="flow-step">
 <div class="fnum">STEP 03</div>
@@ -691,7 +695,7 @@ footer { padding: 40px 0; border-top: 1px solid var(--line); }
 <div class="flow-step">
 <div class="fnum">STEP 04</div>
 <h3>Redeem &amp; enjoy</h3>
-<p>Apply your code on the platform and unlock full access.</p>
+<p>Follow the instructions supplied with your voucher.</p>
 </div>
 </div>
 </div>
@@ -700,9 +704,9 @@ footer { padding: 40px 0; border-top: 1px solid var(--line); }
 <!-- STRIP -->
 <div class="strip">
 <div class="wrap">
-<div><strong>10+</strong> platforms supported</div>
-<div><strong>Same-day</strong> voucher delivery</div>
-<div><strong>Local</strong> payment, global access</div>
+<div><strong>Flexible</strong> voucher options</div>
+<div><strong>Manual</strong> order confirmation</div>
+<div><strong>Local</strong> payment instructions</div>
 </div>
 </div>
 <section class="vv-info" id="order-guide"><div class="vv-info-inner"><h2>Before you order</h2><p>Choose a voucher on the order page to see the published PGK price and payment instructions with you before you transfer any money.</p><div class="vv-info-grid"><article><h3>Prices &amp; payment</h3><p>Ask for your preferred voucher denomination. We will confirm the price and payment instructions before you pay.</p></article><article><h3>Delivery &amp; support</h3><p>This form submits a request, not a payment. We confirm availability and delivery timing before you pay.</p></article><article><h3>Safety &amp; refunds</h3><p>Never share a bank PIN, password, or one-time code. If a payment or voucher has an issue, contact us with your order details so we can review the case and explain available remedies.</p></article></div><small>Card images are samples only. Platform names indicate customer interests, not a guarantee that every product is in stock or an affiliation with those brands. Please confirm product availability, final amount and delivery arrangements before payment.</small></div></section>
@@ -735,19 +739,19 @@ footer { padding: 40px 0; border-top: 1px solid var(--line); }
 <div class="wrap">
 <div class="trust">
 <div class="trust-item">
-<div class="tnum">10+</div>
+<div class="tnum">01</div>
 <h3>Platforms supported</h3>
 <p>From streaming to gaming, top up the services people actually use.</p>
 </div>
 <div class="trust-item">
-<div class="tnum">100%</div>
+<div class="tnum">02</div>
 <h3>Local payment</h3>
-<p>Pay via phone banking or cash — no foreign card required.</p>
+<p>Review the payment instructions before transferring money.</p>
 </div>
 <div class="trust-item">
-<div class="tnum">Same-day</div>
+<div class="tnum">03</div>
 <h3>Voucher delivery</h3>
-<p>Delivery timing is confirmed after we review your payment.</p>
+<p>We confirm availability and timing before you pay.</p>
 </div>
 </div>
 </div>
