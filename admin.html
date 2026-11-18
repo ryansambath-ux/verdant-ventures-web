@@ -16,8 +16,9 @@ main{position:relative;z-index:1;padding-top:30px;padding-bottom:70px}.hero{posi
 
 .inventory-panel{margin-top:25px}.inventory-head{display:flex;align-items:center;justify-content:space-between;gap:15px;flex-wrap:wrap}.inventory-head h2{font:700 24px Space Grotesk;margin:0}.inventory-head p,.inventory-note{color:var(--muted);font-size:12px}.stock-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px;margin:18px 0}.stock{border:1px solid var(--line);background:#09263d;border-radius:14px;padding:16px}.stock strong{font:700 29px Space Grotesk;display:block;color:#a4f77e}.stock small{color:#b4d1d6}.import-row{display:flex;align-items:end;gap:12px;flex-wrap:wrap;margin:16px 0}.import-row label{margin:0;flex:1;min-width:230px}.import-row input{margin-top:7px}.inventory-table{width:100%;border-collapse:collapse;font-size:12px}.inventory-table th,.inventory-table td{text-align:left;border-bottom:1px solid var(--line);padding:10px 8px;overflow-wrap:anywhere}.inventory-table th{color:#a9c5ce}.inventory-table-wrap{overflow:auto}.inventory-note{margin:12px 0}.stock-status{font-weight:800;color:#a4f77e}.stock-status.redeemed{color:#a3f5ef}.stock-status.reserved{color:#ffe5a8}.reset-link{display:block;margin:16px auto 0;border:0;background:none;color:#a7efbf;text-decoration:underline;font-weight:700;padding:6px}.reset-link:hover{color:#fff}@media(max-width:650px){.stock-grid{grid-template-columns:repeat(2,1fr)}}
 </style>
+<link rel="stylesheet" href="support-messaging.css">
 </head>
-<body>
+<body data-support-role="admin">
 <header><div class="wrap nav"><div class="brand"><img src="verdant-logo.jpg" alt="Verdant Ventures logo"><div><strong>VERDANT VENTURES</strong><small>Integrated Technology</small></div></div><div class="nav-tag">SECURE ADMIN PORTAL</div></div></header>
 <main class="wrap">
 <section class="hero"><div class="eyebrow">Verdant Ventures / Operations</div><h1>Order Command Centre<span style="color:#a2f282">.</span></h1><p>Track submissions. Verify BSP payments. Deliver with confidence.</p></section>
@@ -28,6 +29,27 @@ main{position:relative;z-index:1;padding-top:30px;padding-bottom:70px}.hero{posi
 <div class="notice hidden" id="pendingNotice"><div><strong id="noticeTitle">Orders awaiting review</strong><p>Check the BSP transfer independently before approving any order.</p></div><button id="viewPending" class="btn small">View pending →</button></div>
 <div class="filters" aria-label="Filter orders"><button class="filter active" data-filter="all">All <span class="count" id="allBadge">0</span></button><button class="filter" data-filter="pending" id="pendingFilter">● Pending <span class="count" id="pendingBadge">0</span></button><button class="filter" data-filter="approved">Approved</button><button class="filter" data-filter="rejected">Rejected</button><button class="filter" data-filter="delivered">Delivered</button></div>
 <div class="orders" id="orders"></div>
+
+<section class="panel support-panel" id="supportPanel" aria-label="Customer support inbox">
+  <div class="support-header"><div><div class="eyebrow">Customer communications</div><h2>Support Inbox</h2><p>Reply to customers directly from Verdant Admin. Support: <a href="mailto:info@verdantventures.online">info@verdantventures.online</a></p></div></div>
+  <p id="supportAdminStatus" class="support-status" role="status" aria-live="polite"></p>
+  <div class="support-layout">
+    <aside class="support-sidebar" aria-label="Customer conversations">
+      <label class="support-search" for="supportSearch">Find customer<input type="search" id="supportSearch" placeholder="Search name or email"></label>
+      <div id="supportThreads" class="support-thread-list"></div>
+    </aside>
+    <div class="support-chat">
+      <div id="supportChatTitle" class="support-chat-title">Select a conversation</div>
+      <div id="supportAdminLog" class="support-log" role="log" aria-label="Conversation messages" aria-live="polite"></div>
+      <form id="supportAdminForm" class="support-compose">
+        <label for="supportAdminText">Reply to customer</label>
+        <textarea id="supportAdminText" maxlength="1500" placeholder="Write a reply…" required></textarea>
+        <button class="btn" type="submit" id="supportAdminSend" disabled>Send reply</button>
+        <small class="support-note">Never request passwords, bank PINs or one-time codes. Replies appear in the customer's Verdant account.</small>
+      </form>
+    </div>
+  </div>
+</section>
 <section class="panel inventory-panel" id="inventoryPanel"><div class="inventory-head"><div><div class="eyebrow">Private stock register</div><h2>Voucher Inventory</h2><p>Admin-only Rewarble voucher codes. BSP verification and redemption remain manual.</p></div><button class="btn secondary small" id="downloadTemplate" type="button">Download test CSV</button></div>
 <div class="stock-grid" id="stockGrid"></div>
 <div class="import-row"><label>Import voucher CSV<input id="inventoryCsv" type="file" accept=".csv,text/csv"></label><button id="importVouchers" class="btn" type="button">Import selected CSV</button></div>
@@ -84,4 +106,5 @@ $('logoutButton').addEventListener('click',async()=>{try{await signOut(auth);}ca
 document.querySelectorAll('[data-filter]').forEach(b=>b.addEventListener('click',()=>setFilter(b.dataset.filter)));$('viewPending').addEventListener('click',()=>setFilter('pending'));
 onAuthStateChanged(auth,async user=>{if(unsubscribeOrders){unsubscribeOrders();unsubscribeOrders=null;}if(unsubscribeInventory){unsubscribeInventory();unsubscribeInventory=null;}inventory=[];renderInventory();orders=[];previousIds=null;unseenNew=0;updateCounts();renderOrders();if(!user){dashboard.classList.add('hidden');loginPanel.classList.remove('hidden');showMessage('Sign in to view orders.');document.title='Verdant Ventures | Admin Command Centre';return;}if(user.uid!==ADMIN_UID){dashboard.classList.add('hidden');loginPanel.classList.remove('hidden');showMessage('This account is not authorised as an admin.','error');await signOut(auth);return;}loginPanel.classList.add('hidden');dashboard.classList.remove('hidden');$('signedInAs').textContent=user.email||'Admin';showMessage('Loading orders…');unsubscribeInventory=onSnapshot(collection(db,'voucher_inventory'),snapshot=>{inventory=snapshot.docs.map(d=>({id:d.id,...d.data()})).sort((a,b)=>String(a.stock_id).localeCompare(String(b.stock_id)));renderInventory();renderOrders();},error=>inventoryMessage('Inventory unavailable: '+error.message,true));unsubscribeOrders=onSnapshot(collection(db,'payments'),snapshot=>{const next=snapshot.docs.map(item=>({id:item.id,...item.data()}));if(previousIds!==null){const fresh=next.filter(o=>o.status==='pending'&&!previousIds.has(o.id));if(fresh.length){unseenNew+=fresh.length;document.title='● '+unseenNew+' NEW | Verdant Admin';showMessage(fresh.length+' new pending order'+(fresh.length===1?'':'s')+' received.','success');}}previousIds=new Set(next.map(o=>o.id));orders=next.sort((a,b)=>(b.createdAt?.toMillis?.()??0)-(a.createdAt?.toMillis?.()??0));updateCounts();renderOrders();if(!unseenNew)showMessage('Live orders connected. Verify BSP payments before approval.','success');},error=>showMessage('Could not load orders: '+error.message,'error'));});
 </script>
+<script type="module" src="support-messaging.js"></script>
 </body></html>
