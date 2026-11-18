@@ -1,0 +1,31 @@
+// Insert this match block inside the existing:
+// match /databases/{database}/documents { ... }
+// It relies on the existing admin() function (checks Firebase admin UID).
+// Do NOT replace the other Firestore payment, inventory, or profile rules.
+match /support_messages/{messageId} {
+  allow create: if request.auth != null
+    && request.resource.data.keys().hasAll(['customer_uid','customer_email','customer_name','sender','body','createdAt'])
+    && request.resource.data.keys().hasOnly(['customer_uid','customer_email','customer_name','sender','body','createdAt'])
+    && request.resource.data.customer_uid is string
+    && request.resource.data.customer_uid.size() > 0
+    && request.resource.data.customer_uid.size() <= 128
+    && request.resource.data.customer_email is string
+    && request.resource.data.customer_email.size() > 3
+    && request.resource.data.customer_email.size() <= 250
+    && request.resource.data.customer_name is string
+    && request.resource.data.customer_name.size() <= 100
+    && request.resource.data.body is string
+    && request.resource.data.body.size() > 0
+    && request.resource.data.body.size() <= 1500
+    && request.resource.data.createdAt == request.time
+    && (
+      (admin() && request.resource.data.sender == 'admin')
+      || (request.resource.data.sender == 'customer'
+          && request.resource.data.customer_uid == request.auth.uid
+          && request.resource.data.customer_email == request.auth.token.email)
+    );
+  allow read: if admin() || (
+    request.auth != null && resource.data.customer_uid == request.auth.uid
+  );
+  allow update, delete: if false;
+}
